@@ -1,0 +1,127 @@
+local Players = game:GetService("Players")
+local localPlayer = Players.LocalPlayer
+local PlayerGui = localPlayer:WaitForChild("PlayerGui")
+
+local highlightEnabled = true
+local highlights = {}
+
+-- Function to create highlight for a character
+local function createHighlight(character)
+    if not character or highlights[character] then return end
+
+    local highlight = Instance.new("Highlight")
+    highlight.Name = "Highlight"
+    highlight.Adornee = character
+    highlight.FillColor = Color3.fromRGB(255, 0, 0)
+    highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+    highlight.FillTransparency = 0.5
+    highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+    highlight.Parent = character
+
+    highlights[character] = highlight
+end
+
+local function removeHighlight(character)
+    if highlights[character] then
+        highlights[character]:Destroy()
+        highlights[character] = nil
+    end
+end
+
+local function enableHighlights()
+    highlightEnabled = true
+    ToggleButton.Text = "Highlight: ON"
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= localPlayer and player.Character then
+            createHighlight(player.Character)
+        end
+    end
+end
+
+local function disableHighlights()
+    highlightEnabled = false
+    ToggleButton.Text = "Highlight: OFF"
+    for character, highlight in pairs(highlights) do
+        if highlight then
+            highlight:Destroy()
+        end
+    end
+    highlights = {}
+end
+
+-- UI Creation
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "JAIWANTHighlightUI"
+ScreenGui.Parent = PlayerGui
+
+local Frame = Instance.new("Frame")
+Frame.Size = UDim2.new(0, 220, 0, 80)
+Frame.Position = UDim2.new(0, 20, 0, 20)
+Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+Frame.BackgroundTransparency = 0.2
+Frame.BorderSizePixel = 0
+Frame.Parent = ScreenGui
+Frame.AnchorPoint = Vector2.new(0, 0)
+
+-- Logo Label
+local LogoLabel = Instance.new("TextLabel")
+LogoLabel.Size = UDim2.new(0, 200, 0, 40)
+LogoLabel.Position = UDim2.new(0, 10, 0, 5)
+LogoLabel.BackgroundTransparency = 1
+LogoLabel.Text = "JAIWANT"
+LogoLabel.Font = Enum.Font.Bangers
+LogoLabel.TextSize = 32
+LogoLabel.TextColor3 = Color3.fromRGB(255, 215, 0) -- Gold color
+LogoLabel.TextStrokeColor3 = Color3.new(0,0,0)
+LogoLabel.TextStrokeTransparency = 0
+LogoLabel.Parent = Frame
+
+-- Toggle Button
+local ToggleButton = Instance.new("TextButton")
+ToggleButton.Size = UDim2.new(0, 200, 0, 30)
+ToggleButton.Position = UDim2.new(0, 10, 0, 45)
+ToggleButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+ToggleButton.BorderSizePixel = 0
+ToggleButton.TextColor3 = Color3.new(1, 1, 1)
+ToggleButton.Font = Enum.Font.SourceSansBold
+ToggleButton.TextSize = 20
+ToggleButton.Text = "Highlight: ON"
+ToggleButton.Parent = Frame
+
+ToggleButton.MouseButton1Click:Connect(function()
+    if highlightEnabled then
+        disableHighlights()
+    else
+        enableHighlights()
+    end
+end)
+
+-- Character highlight tracking
+local function onCharacterAdded(character)
+    if highlightEnabled and character and character.Parent then
+        createHighlight(character)
+    end
+
+    character.AncestryChanged:Connect(function(_, parent)
+        if not parent then
+            removeHighlight(character)
+        end
+    end)
+end
+
+-- Connect existing players
+for _, player in pairs(Players:GetPlayers()) do
+    if player ~= localPlayer then
+        if player.Character then
+            onCharacterAdded(player.Character)
+        end
+        player.CharacterAdded:Connect(onCharacterAdded)
+    end
+end
+
+-- Listen for new players
+Players.PlayerAdded:Connect(function(player)
+    if player ~= localPlayer then
+        player.CharacterAdded:Connect(onCharacterAdded)
+    end
+end)
