@@ -1,0 +1,71 @@
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "HighlightToggleGui"
+screenGui.Parent = PlayerGui
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 180, 0, 60)
+frame.Position = UDim2.new(0, 20, 0, 20)
+frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+frame.BorderSizePixel = 0
+frame.Parent = screenGui
+frame.Active = true
+frame.Draggable = true
+
+-- Roblox-style Logo Container
+local logoContainer = Instance.new("Frame")
+logoContainer.Size = UDim2.new(0, 60, 0, 60)
+logoContainer.BackgroundTransparency = 1
+logoContainer.Parent = frame
+
+-- Big tilted square (like Roblox "R" block background)
+local tiltedSquare = Instance.new("Frame")
+tiltedSquare.Size = UDim2.new(0, 50, 0, 50)
+tiltedSquare.Position = UDim2.new(0, 5, 0, 5)
+tiltedSquare.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+tiltedSquare.AnchorPoint = Vector2.new(0.5, 0.5)
+tiltedSquare.Position = UDim2.new(0, 30, 0, 30)
+tiltedSquare.Rotation = 45
+tiltedSquare.Parent = logoContainer
+tiltedSquare.BorderSizePixel = 0
+tiltedSquare.ZIndex = 2
+
+-- Inner cutout to form "R" shape (simplified)
+local cutout = Instance.new("Frame")
+cutout.Size = UDim2.new(0, 30, 0, 30)
+cutout.Position = UDim2.new(0, 15, 0, 15)
+cutout.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+cutout.AnchorPoint = Vector2.new(0.5, 0.5)
+cutout.Position = UDim2.new(0, 30, 0, 30)
+cutout.Rotation = 45
+cutout.Parent = logoContainer
+cutout.BorderSizePixel = 0
+cutout.ZIndex = 3
+
+-- Text Label for "JAIWANT"
+local logoText = Instance.new("TextLabel")
+logoText.Size = UDim2.new(0, 100, 0, 60)
+logoText.Position = UDim2.new(0, 70, 0, 0)
+logoText.BackgroundTransparency = 1
+logoText.Text = "JAIWANT"
+logoText.Font = Enum.Font.GothamBold
+logoText.TextSize = 28
+logoText.TextColor3 = Color3.fromRGB(255, 255, 255)
+logoText.TextXAlignment = Enum.TextXAlignment.Left
+logoText.Parent = frame
+
+-- Toggle Button
+local toggleButton = Instance.new("TextButton")
+toggleButton.Size = UDim2.new(0, 180, 0, 30)
+toggleButton.Position = UDim2.new(0, 0, 0, 60)
+toggleButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+toggleButton.TextColor3 = Color3.new(1, 1, 1)
+toggleButton.Font = Enum.Font.GothamBold
+toggleButton.TextSize = 20
+toggleButton.Text = "Highlight: OFF"
+toggleButton.Parent = frame
+
+-- The rest of your highlight script logic goes here...
